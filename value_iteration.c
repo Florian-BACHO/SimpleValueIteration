@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <unistd.h>
 
 #define MAP_SIZE		8
 #define NB_ITERATION		10
@@ -29,15 +31,25 @@ typedef struct point_s {
 static const point goal = {2, 2};
 static const point traps[] = {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}};
 
-static void print_values(const float values[MAP_SIZE][MAP_SIZE], int iteration)
+// Write values on a .dat file that are printed on gnuplot
+static bool print_values(const float values[MAP_SIZE][MAP_SIZE], int iteration)
 {
-	printf("Iteration %d:\n\n", iteration);
+	FILE *stream = fopen("data.dat", "w+");
+
+	if (!stream)
+		return (false);
+	fprintf(stream, "%d ", MAP_SIZE);
+	for (int i = 0; i < MAP_SIZE; i++)
+		fprintf(stream, "%d ", i);
+	fprintf(stream, "\n");
 	for (int y = 0; y < MAP_SIZE; y++) {
+		fprintf(stream, "%d ", y);
 		for (int x = 0; x < MAP_SIZE; x++)
-			printf("%5.2f ", values[y][x]);
-		printf("\n\n");
+			fprintf(stream, "%f ", values[y][x]);
+		fprintf(stream, "\n");
 	}
-	printf("\n");
+	fclose(stream);
+	return (true);
 }
 
 // Reward of a state
@@ -90,16 +102,27 @@ static void value_iterate(const float values[MAP_SIZE][MAP_SIZE],
 				get_expected_futur_reward(values, y, x);
 }
 
+/*
+** Launch gnuplot with plot_script.p script (auto-refresh) and launch the
+** value iteration algotithm
+*/
 int main()
 {
+	FILE *gnuplot = popen("gnuplot plot_script.p", "w");
 	float values[MAP_SIZE][MAP_SIZE] = {{0}};
         float new_values[MAP_SIZE][MAP_SIZE];
 
+	if (!gnuplot)
+		return (1);
 	memset(values, 0, sizeof(values));
 	print_values(values, 0);
 	for (int i = 0; i < NB_ITERATION; i++) {
+		sleep(1);
 		value_iterate(values, new_values);
 		memcpy(values, new_values, sizeof(new_values));
-		print_values(values, i + 1);
+		if (!print_values(values, i + 1))
+			return (1);
 	}
+	pclose(gnuplot);
+	return (0);
 }
