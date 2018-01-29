@@ -20,7 +20,7 @@
 #define NORMAL_REWARD		-0.2f
 #define TRAP_REWARD		-1.0f
 
-#define DISCOUNT_FACTOR		0.5f // Must be less than 1.0f
+#define DISCOUNT_FACTOR		0.5f // 0.0f < DISCOUNT_FACTOR < 1.0f
 
 // Point structure use to define goal or traps
 typedef struct point_s {
@@ -56,7 +56,7 @@ static bool print_values(const float values[MAP_SIZE][MAP_SIZE], int iteration)
 	return (true);
 }
 
-// Reward of a state
+// Reward of a state --> R(s)
 static float get_reward(int x, int y)
 {
 	if (x == goal.x && y == goal.y)
@@ -75,7 +75,7 @@ static inline void change_if_greater(float *to_change, float value)
 
 /*
 ** Compute the sum of expected futur rewards (there is no sum because
-** transitions probabilities are always 1)
+** transitions probabilities are always 1) --> Sigma(P(s | s',a) * V(s'))
 */
 static float get_expected_futur_reward(const float values[MAP_SIZE][MAP_SIZE],
 				      int x, int y)
