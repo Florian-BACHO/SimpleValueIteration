@@ -21,3 +21,9 @@ or
 ```
 make run
 ```
+
+## More details
+
+[Reinforcement Learning](https://en.wikipedia.org/wiki/Reinforcement_learning)
+[Markov Decision Process](https://en.wikipedia.org/wiki/Markov_decision_process)
+[Value Iteration Algorithm](https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume4/kaelbling96a-html/node19.html)
