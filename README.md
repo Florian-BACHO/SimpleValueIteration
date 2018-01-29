@@ -1,4 +1,4 @@
-# Simple Value Iteration
+# Reinforcement Learning - Markov Decision Process | Simple Value Iteration Algorithm
 A simple demonstration of the value iteration algorithm in C. This passive reinforcement learning algorithm is done on a simple 2D environment (with a goal and traps).
 
 ## Requires
