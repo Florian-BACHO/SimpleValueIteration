@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 #define MAP_SIZE		8
-#define NB_ITERATION		10
+#define NB_ITERATION		30
 #define NB_TRAP			5
 
 // Rewards
@@ -20,7 +20,7 @@
 #define NORMAL_REWARD		-0.2f
 #define TRAP_REWARD		-1.0f
 
-#define DISCOUNT_FACTOR		0.5f
+#define DISCOUNT_FACTOR		0.5f // Must be less than 1.0f
 
 // Point structure use to define goal or traps
 typedef struct point_s {
@@ -29,7 +29,7 @@ typedef struct point_s {
 } point;
 
 static const point goal = {2, 2};
-static const point traps[] = {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}};
+static const point traps[] = {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}};
 
 // Write values on a .dat file that are printed on gnuplot
 static bool print_values(const float values[MAP_SIZE][MAP_SIZE], int iteration)
@@ -44,10 +44,14 @@ static bool print_values(const float values[MAP_SIZE][MAP_SIZE], int iteration)
 	fprintf(stream, "\n");
 	for (int y = 0; y < MAP_SIZE; y++) {
 		fprintf(stream, "%d ", y);
-		for (int x = 0; x < MAP_SIZE; x++)
+		for (int x = 0; x < MAP_SIZE; x++) {
 			fprintf(stream, "%f ", values[y][x]);
+			printf("%7.4f ", values[MAP_SIZE - y - 1][x]);
+		}
+		printf("\n");
 		fprintf(stream, "\n");
 	}
+	printf("\n");
 	fclose(stream);
 	return (true);
 }
@@ -78,8 +82,9 @@ static float get_expected_futur_reward(const float values[MAP_SIZE][MAP_SIZE],
 {
 	float out = values[y][x];
 
-	if (y > 0)
+	if (y > 0) {
 		change_if_greater(&out, values[y - 1][x]);
+	}
 	if (y < MAP_SIZE - 1)
 		change_if_greater(&out, values[y + 1][x]);
 	if (x > 0)
@@ -99,7 +104,7 @@ static void value_iterate(const float values[MAP_SIZE][MAP_SIZE],
 	for (int y = 0; y < MAP_SIZE; y++)
 		for (int x = 0; x < MAP_SIZE; x++)
 			new_values[y][x] = get_reward(x, y) + DISCOUNT_FACTOR *
-				get_expected_futur_reward(values, y, x);
+				get_expected_futur_reward(values, x, y);
 }
 
 /*
@@ -115,11 +120,13 @@ int main()
 	if (!gnuplot)
 		return (1);
 	memset(values, 0, sizeof(values));
+	printf("Initialization\n");
 	print_values(values, 0);
 	for (int i = 0; i < NB_ITERATION; i++) {
 		sleep(1);
 		value_iterate(values, new_values);
 		memcpy(values, new_values, sizeof(new_values));
+		printf("Iteration %d\n\n", i + 1);
 		if (!print_values(values, i + 1))
 			return (1);
 	}
