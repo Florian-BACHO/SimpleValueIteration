@@ -12,6 +12,12 @@ sudo apt-get install gnuplot
 ## Launch program
 
 ```
-gcc -o value_iteration value_iteration.c
+make
 ./value_iteration
+```
+
+or
+
+```
+make run
 ```
