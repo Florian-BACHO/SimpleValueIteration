@@ -15,7 +15,7 @@
 	#include <unistd.h>
 
 	#define MAP_SIZE		8
-	#define NB_ITERATION		30
+	#define NB_ITERATION		10
 	#define NB_TRAP			5
 
 	// Rewards

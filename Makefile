@@ -6,13 +6,16 @@
 ##
 
 SRC		=	src/value_iteration.c \
-			src/print_values.c
+			src/print_values.c \
+			src/neural_network.c
 
 OBJ		=	$(SRC:.c=.o)
 
 CFLAGS		=	-W -Wall -Wextra
 
 CPPFLAGS	=	-I include
+
+LDFLAGS		=	-lfann
 
 NAME		=	value_iteration
 
@@ -26,7 +29,7 @@ run: all
 	./$(NAME)
 
 $(NAME): $(OBJ)
-	cc -o $(NAME) $(OBJ)
+	cc -o $(NAME) $(OBJ) $(LDFLAGS)
 
 clean:
 	rm -rf $(OBJ)

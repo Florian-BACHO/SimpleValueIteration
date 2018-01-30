@@ -5,6 +5,7 @@
 ** Exemple with simple 2D environment
 */
 
+#include "neural_network.h"
 #include "value_iteration.h"
 
 static const point goal = {2, 2};
@@ -84,6 +85,7 @@ int main()
 		if (!print_values(values))
 			return (1);
 	}
+	test_learning(values);
 	pclose(gnuplot);
 	return (0);
 }
